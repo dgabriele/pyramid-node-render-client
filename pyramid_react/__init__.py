@@ -1,18 +1,16 @@
+
 from .client import ReactClient
-from .util import transform_directory
 
 
 def includeme(config):
     settings = config.get_settings()
 
-    src_dir = settings['react.src-dir']
-    dst_dir = settings['react.dst-dir']
+    client = ReactClient.from_settings(settings)
 
-    # generate JS files from new or updated JSX files.
-    transform_directory(src_dir, dst_dir)
+    # transform each JSX file on the path
+    client.transform_path(settings['react.path'])
 
-    client = ReactClient(dst_dir,
-                         http_socket=settings.get('react.http-socket'),
-                         unix_socket=settings.get('react.unix-socket'))
+    def react(req):
+        return client
 
-    config.add_request_method(client, 'react', reify=True)
+    config.add_request_method(react, reify=True)
