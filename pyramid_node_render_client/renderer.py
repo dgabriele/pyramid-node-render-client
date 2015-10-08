@@ -3,19 +3,23 @@ import requests
 import requests_unixsocket
 
 
-class ReactRenderer(object):
-    """ Renderer that outsources HTML rendering to react-render-service, which
-        can be found here: https://github.com/dgabriele/react-render-service.
+class Renderer(object):
+    """ Renderer that outsources HTML rendering to node via
+        pyramid-node-render-service.
+
+        See: https://github.com/dgabriele/react-render-service.
     """
+
+    RE_HTTP_SOCKET = re.compile(r'^(.+):(\d+)$')
 
     def __init__(self, info):
         # bind can be an http or domain socket.
         # EG: '/tmp/react.sock' or 'localhost:8080'
         self.template = info.name.split('.')[0]
-        self.bind = info.settings.get('react.bind')
+        self.bind = info.settings.get('node-render-client.bind')
         if not self.bind:
             raise ValueError('react.bind must be defined in settings')
-        if re.match(r'^(.+):(\d+)$', self.bind):
+        if self.RE_HTTP_SOCKET.match(self.bind):
             self.session = requests.Session()
             self.url = 'http://{}/render'.format(self.bind)
         else:
