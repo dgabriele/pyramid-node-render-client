@@ -27,4 +27,4 @@ class ReactRenderer(object):
         return self.session.post(self.url, json={
             'template': self.template,
             'context': value,
-        }).json()
+        }).text

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+import os
+
 from setuptools import setup, find_packages
 
 
-with open(os.path.join(here, 'requirements.txt')) as f:
+with open(os.path.join(os.getcwd(), 'requirements.txt')) as f:
     requires = f.read()
 
 setup(
