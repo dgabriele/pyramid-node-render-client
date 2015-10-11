@@ -28,7 +28,11 @@ class Renderer(object):
             self.url = 'http+unix://{}/render'.format(socket_path)
 
     def __call__(self, value, system):
+        if hasattr(value, '__json__'):
+            context = value.__json__(request=system.get('request'))
+        else:
+            context = value
         return self.session.post(self.url, json={
             'template': self.template,
-            'context': value,
+            'context': context,
         }).text
